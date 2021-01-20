@@ -1,0 +1,39 @@
+---
+- name: create dir for ymls
+  file:
+    path: "{{ dst_compose_files_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: deploy .env file
+  lineinfile:
+    path: "{{ dst_compose_files_dir }}/.env"
+    line: "{{ item.key }}={{ item.value }}"
+    regexp: "^{{ item.key }}="
+    create: yes
+    mode: 0600
+  with_dict: "{{ deploy_envs }}"
+  when: deploy_envs is defined and create_env_file
+  no_log: true
+
+- name: create compose file
+  copy:
+    src: "{{ src_compose_files_dir }}/{{ item.name }}.yml"
+    dest: "{{ dst_compose_files_dir }}/{{ item.name }}.yml"
+    mode: '0644'
+  loop: "{{ composes }}"
+
+- name: deploy compose file
+  docker_compose:
+    project_name: "{{ item.name }}"
+    project_src: "{{ dst_compose_files_dir }}"
+    files: ["{{ dst_compose_files_dir }}/{{ item.name }}.yml"]
+    state: "{{ item.state | default('present') }}"
+    remove_orphans: "{{ item.remove_orphans | default('yes') }}"
+    recreate: "{{ item.recreate | default('smart') }}"
+    pull: "{{ item.pull | default('yes') }}"
+    stopped: "{{ item.stopped | default('no') }}"
+    timeout: "{{ item.timeout | default('10') }}"
+    debug: "{{ item.debug | default('no') }}"
+  loop: "{{ composes }}"
+  environment: "{{ deploy_envs|default({}) }}"

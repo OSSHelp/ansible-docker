@@ -1,0 +1,51 @@
+---
+- name: gather required facts
+  setup:
+    gather_subset: [min, virtual]
+  when: ansible_distribution_release is not defined
+
+- name: docker installation
+  include_tasks: install.yml
+  when: docker_setup == "full"
+
+- name: loki log driver
+  include_tasks: loki.yml
+  when: loki is defined and (molecule_file is not defined or (loki.poststart_setup is defined and loki.poststart_setup))
+
+- name: docker configuration
+  include_tasks: config.yml
+
+- name: install python modules
+  include_tasks: py_modules.yml
+  when: docker_setup == "full" and
+        (registries is defined or
+        networks is defined or
+        volumes is defined or
+        containers is defined or
+        stacks is defined or
+        composes is defined or
+        swarm_init is defined)
+
+- name: docker login into registries
+  include_tasks: login.yml
+  when: registries is defined
+
+- name: deploy docker networks
+  include_tasks: networks.yml
+  when: networks is defined and molecule_file is not defined
+
+- name: deploy docker volumes
+  include_tasks: volumes.yml
+  when: volumes is defined and molecule_file is not defined
+
+- name: deploy docker containers
+  include_tasks: containers.yml
+  when: containers is defined and molecule_file is not defined
+
+- name: deploy stacks files
+  include_tasks: stacks.yml
+  when: (stacks is defined or swarm_init is defined) and molecule_file is not defined
+
+- name: deploy compose files
+  include_tasks: composes.yml
+  when: composes is defined and molecule_file is not defined

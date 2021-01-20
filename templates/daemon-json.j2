@@ -1,0 +1,29 @@
+{
+{% if tcp_listen %} "hosts": ["tcp://{{ tcp_listen_addr | default('0.0.0.0') }}:{{ tcp_listen_port | default('2375') }}", "unix:///var/run/docker.sock"],
+{% endif %}
+{% if metrics_enable %} "metrics-addr" : "{{ metrics_addr | default('0.0.0.0') }}:{{ metrics_port | default('19323') }}",
+{% endif %}
+{% if experimental_enable %} "experimental" : true,
+{% endif %}
+{% if remap_enable %} "userns-remap" : "{{ remap_user | default('dockremap') }}",
+{% endif %}
+{% if insecure_registries is defined %} "insecure-registries" : [{% for registry in insecure_registries %}"{{ registry }}"{% if not loop.last %},{% endif %}],
+{% endfor %}
+{% endif %}
+{% if loki.host is defined and molecule_file is not defined and (ansible_virtualization_type != 'lxc' or is_var_local_daemon_json is defined or loki.poststart_setup is not defined or not loki.poststart_setup) %} "log-driver": "loki",
+{% endif %}
+ "log-opts": {
+{% if loki.host is defined and molecule_file is not defined and (ansible_virtualization_type != 'lxc' or is_var_local_daemon_json is defined or loki.poststart_setup is not defined or not loki.poststart_setup) %}   "loki-url": "{{ loki.host }}{{ loki.uri | default('/loki/api/v1/push')}}",
+   "loki-external-labels": "{{ loki.external_labels | default('container_name={{.Name}}') }}",
+   "loki-batch-size": "{{ loki.batch_size | default('102400') }}",
+   "loki-timeout": "{{ loki.timeout | default('10s') }}",
+   "loki-batch-wait": "{{ loki.batch_wait | default('1s') }}",
+   "loki-min-backoff": "{{ loki.min_backoff | default('100ms') }}",
+   "loki-max-backoff": "{{ loki.max_backoff | default('10s') }}",
+   "loki-retries": "{{ loki.retries | default('10') }}",
+{% endif %}
+   "max-size": "{{ log.max_size | default('50m') }}",
+   "max-file": "{{ log.max_file | default('10') }}"
+ },
+ "ipv6": {{ 'true' if ipv6_enable else 'false' }}
+}

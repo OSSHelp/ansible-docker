@@ -1,0 +1,17 @@
+---
+- name: deploy docker container
+  docker_container:
+    name: "{{ item.name }}"
+    state: "{{ item.state | default('started') }}"
+    restart_policy: "{{ item.restart_policy | default('always') }}"
+    image: "{{ item.image }}"
+    networks: "{{ item.networks | default([]) }}"
+    command: "{{ item.command | default('') }}"
+    volumes: "{{ item.volumes | default([]) }}"
+    exposed_ports: "{{ item.exposed_ports | default([]) }}"
+    published_ports: "{{ item.published_ports | default([]) }}"
+    links: "{{ item.links | default([]) }}"
+    capabilities: "{{ item.capabilities | default([]) }}"
+    security_opts: "{{ item.security_opts | default([]) }}"
+    env: "{{ item.env | default({}) }}"
+  loop: "{{ containers }}"

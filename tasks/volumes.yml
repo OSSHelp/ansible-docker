@@ -1,0 +1,7 @@
+---
+- name: deploy docker volume
+  docker_volume:
+    name: "{{ item.name }}"
+    state: "{{ item.state | default('present') }}"
+    driver_options: "{{ item.driver_options | default({}) }}"
+  loop: "{{ volumes }}"

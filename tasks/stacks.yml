@@ -1,0 +1,41 @@
+---
+- name: create dir for ymls
+  file:
+    path: "{{ dst_stack_files_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: deploy .env file
+  lineinfile:
+    path: "{{ dst_stack_files_dir }}/.env"
+    line: "export {{ item.key }}='{{ item.value }}'"
+    regexp: "^export {{ item.key }}="
+    create: yes
+    mode: 0600
+  with_dict: "{{ deploy_envs }}"
+  when: deploy_envs is defined and create_env_file
+  no_log: true
+
+- name: create stack file
+  copy:
+    src: "{{ src_stack_files_dir }}/{{ item.name }}.yml"
+    dest: "{{ dst_stack_files_dir }}/{{ item.name }}.yml"
+    mode: '0644'
+  loop: "{{ stacks }}"
+  when: stacks is defined
+
+- name: init a new swarm if not exists
+  docker_swarm:
+    state: present
+
+- name: deploy stack file
+  docker_stack:
+    name: "{{ item.name }}"
+    compose: ["{{ dst_stack_files_dir }}/{{ item.name }}.yml"]
+    state: "{{ item.state | default('present') }}"
+    prune: "{{ item.prune | default('no') }}"
+    resolve_image: "{{ item.resolve_image | default('always') }}"
+    with_registry_auth: "{{ item.with_registry_auth | default('yes') }}"
+  loop: "{{ stacks }}"
+  environment: "{{ deploy_envs|default({}) }}"
+  when: stacks is defined

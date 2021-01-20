@@ -1,0 +1,41 @@
+---
+- name: install required packages
+  apt:
+    name: "{{ required_packages }}"
+    state: present
+    update_cache: true
+    cache_valid_time: 86400
+
+- name: add an apt key for docker repo
+  apt_key:
+    url: "{{ repo_key }}"
+    state: present
+
+- name: add a docker repo
+  apt_repository:
+    repo: "{{ repo_url }}"
+    state: present
+
+- name: create user for remap
+  user:
+    name: "{{ remap_user }}"
+    comment: "User for docker userns-remap"
+    state: present
+    create_home: false
+  when: remap_enable
+
+- name: install docker
+  apt:
+    name: "{{ docker_packages[repo_branch] }}"
+    state: present
+    update_cache: true
+    cache_valid_time: 86400
+
+- meta: flush_handlers
+
+- name: install docker-compose
+  get_url:
+    url: "{{ compose_url }}"
+    dest: /usr/local/bin/docker-compose
+    mode: 0755
+  when: install_compose

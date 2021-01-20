@@ -1,0 +1,27 @@
+---
+- name: check loki installation
+  command: docker plugin ls
+  register: docker_plugins
+  changed_when: false
+  when: loki.poststart_setup is not defined or not loki.poststart_setup
+
+- name: create prestart and poststart scripts
+  block:
+    - name: create prestart and poststart scripts
+      copy:
+        src: "{{ item.src }}"
+        dest: "/usr/local/sbin/{{ item.dest }}"
+        mode: 0750
+      loop:
+        - {src: "files/prestart.sh", dest: "custom.docker-prestart.sh"}
+        - {src: "files/poststart.sh", dest: "custom.docker-poststart.sh"}
+    - name: create disable-loki-docker-log-driver.trigger
+      copy:
+        content: ""
+        dest: /var/tmp/disable-loki-docker-log-driver.trigger
+        force: no
+  when: loki.host is defined and loki.poststart_setup is defined and loki.poststart_setup
+
+- name: loki plugin istallation
+  command: docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions
+  when: docker_plugins.stdout is defined and docker_plugins.stdout is not search('loki') and (loki.poststart_setup is not defined or not loki.poststart_setup)

@@ -1,0 +1,15 @@
+---
+- name: install required packages
+  apt:
+    name: "{{ python_packages }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: 86400
+
+- name: install required python modules
+  pip:
+    executable: pip3
+    name:
+      - docker
+      - docker-compose
+      - jsondiff

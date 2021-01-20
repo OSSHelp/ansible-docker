@@ -1,0 +1,8 @@
+[Service]
+{% if tcp_listen %}
+ExecStart=
+ExecStart=/usr/bin/dockerd --containerd=/run/containerd/containerd.sock
+{% endif %}{% if loki.poststart_setup is defined and loki.poststart_setup %}
+ExecStartPre=/usr/local/sbin/custom.docker-prestart.sh
+ExecStartPost=/usr/local/sbin/custom.docker-poststart.sh
+{% endif %}

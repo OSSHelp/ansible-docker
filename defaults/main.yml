@@ -1,0 +1,56 @@
+---
+docker_setup: full
+repo_key: 'https://download.docker.com/linux/ubuntu/gpg'
+repo_branch: stable
+repo_url: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename|lower }} {{ repo_branch }}"
+compose_url: "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-Linux-x86_64"
+
+ansible_python_interpreter: /usr/bin/python3
+
+required_packages:
+  - apt-transport-https
+  - ca-certificates
+  - software-properties-common
+
+docker_packages:
+  stable:
+    - docker-ce
+    - docker-ce-cli
+  test:
+    - docker-ce
+    - docker-ce-cli
+
+python_packages:
+  - python3-pip
+  - python3-setuptools
+  - python3-virtualenv
+  - python3-wheel
+
+install_py_module: false
+install_compose: true
+create_env_file: true
+ipv6_enable: false
+remap_enable: false
+remap_user: dockremap
+remap_subuid: 100000
+metrics_enable: true
+metrics_address: 0.0.0.0
+metrics_port: 19323
+experimental_enable: "{{ metrics_enable }}"
+tcp_listen: false
+
+src_compose_files_dir: "../../docker-compose/"
+src_stack_files_dir: "../../docker-stack/"
+dst_compose_files_dir: "/usr/local/etc/docker-compose"
+dst_stack_files_dir: "/usr/local/etc/docker-stack"
+
+# networks: [
+#   { name: "netname", state: "present" }
+# ]
+
+# containers: [
+#  { name: "cntname", another params }
+# ]
+
+# insecure_registries:
+#   - "172.17.0.1:5000"

@@ -1,0 +1,13 @@
+---
+version: '3.7'
+
+networks:
+  net:
+    attachable: true
+
+services:
+  sleep:
+    image: alpine:latest
+    command: sleep $SLEEP_TIME
+    networks:
+      - net
