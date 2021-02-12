@@ -7,8 +7,9 @@
 {% endif %}
 {% if remap_enable %} "userns-remap" : "{{ remap_user | default('dockremap') }}",
 {% endif %}
-{% if insecure_registries is defined %} "insecure-registries" : [{% for registry in insecure_registries %}"{{ registry }}"{% if not loop.last %},{% endif %}],
-{% endfor %}
+{% if insecure_registries is defined %} "insecure-registries" : [{% for registry in insecure_registries %}"{{ registry }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+{% endif %}
+{% if registry_mirrors is defined %} "registry-mirrors": [{% for registry in registry_mirrors %}"{{ registry }}"{% if not loop.last %}, {% endif %}{% endfor %}],
 {% endif %}
 {% if loki.host is defined and molecule_file is not defined and (ansible_virtualization_type != 'lxc' or is_var_local_daemon_json is defined or loki.poststart_setup is not defined or not loki.poststart_setup) %} "log-driver": "loki",
 {% endif %}
