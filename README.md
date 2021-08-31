@@ -105,6 +105,11 @@ Optional parameters:
 - `loki.max_backoff`. default `10s`
 - `loki.retries`. default `10`
 
+Log options for Loki:
+
+- `log.mode`. default `non-blocking`
+- `log.max_buffer_size`. default `5m`
+
 [Loki docker log driver documentation](https://github.com/grafana/loki/blob/master/cmd/docker-driver/README.md)
 
 ### Environment variables for compose or stack
