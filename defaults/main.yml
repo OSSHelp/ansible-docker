@@ -38,6 +38,8 @@ metrics_address: 0.0.0.0
 metrics_port: 19323
 experimental_enable: "{{ metrics_enable }}"
 tcp_listen: false
+live_restore: false
+swarm_init: false
 
 src_compose_files_dir: "../../docker-compose/"
 src_stack_files_dir: "../../docker-stack/"

@@ -28,5 +28,7 @@
    "max-size": "{{ log.max_size | default('50m') }}",
    "max-file": "{{ log.max_file | default('10') }}"
  },
+{% if live_restore and not swarm_init %} "live-restore": true,
+{% endif %}
  "ipv6": {{ 'true' if ipv6_enable else 'false' }}
 }

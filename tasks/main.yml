@@ -24,7 +24,7 @@
         containers is defined or
         stacks is defined or
         composes is defined or
-        swarm_init is defined)
+        swarm_init)
 
 - name: docker login into registries
   include_tasks: login.yml
@@ -44,7 +44,7 @@
 
 - name: deploy stacks files
   include_tasks: stacks.yml
-  when: (stacks is defined or swarm_init is defined) and molecule_file is not defined
+  when: (stacks is defined or swarm_init) and molecule_file is not defined
 
 - name: deploy compose files
   include_tasks: composes.yml

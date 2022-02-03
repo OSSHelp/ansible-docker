@@ -38,6 +38,15 @@ Test branch:
       docker_setup: configure
 ```
 
+### Enable live-restore mode
+
+Option is incompatible with swarm mode!
+
+``` yaml
+    - role: docker
+      live_restore: true
+```
+
 ### Log in to registries
 
 The list in the ansible vault file with one private registry:
