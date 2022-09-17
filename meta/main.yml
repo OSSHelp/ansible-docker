@@ -8,7 +8,7 @@ galaxy_info:
   platforms:
     - name: Ubuntu
       versions:
-        - xenial
-          bionic
+        - bionic
+        - focal
   galaxy_tags:
     - docker
