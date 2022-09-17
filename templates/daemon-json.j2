@@ -11,7 +11,7 @@
 {% endif %}
 {% if registry_mirrors is defined %} "registry-mirrors": [{% for registry in registry_mirrors %}"{{ registry }}"{% if not loop.last %}, {% endif %}{% endfor %}],
 {% endif %}
-{% if loki.host is defined and molecule_file is not defined and (ansible_virtualization_type != 'lxc' or is_var_local_daemon_json is defined or loki.poststart_setup is not defined or not loki.poststart_setup) %} "log-driver": "loki",
+{% if loki.host is defined and molecule_file is not defined and (ansible_virtualization_type != 'lxc' or is_var_local_daemon_json is defined or loki.poststart_setup is not defined or not loki.poststart_setup) %} "log-driver": "loki", {% else %} "log-driver": "local",
 {% endif %}
  "log-opts": {
 {% if loki.host is defined and molecule_file is not defined and (ansible_virtualization_type != 'lxc' or is_var_local_daemon_json is defined or loki.poststart_setup is not defined or not loki.poststart_setup) %}   "loki-url": "{{ loki.host }}{{ loki.uri | default('/loki/api/v1/push')}}",
@@ -26,7 +26,8 @@
    "max-buffer-size": "{{ log.max_buffer_size | default('5m') }}",
 {% endif %}
    "max-size": "{{ log.max_size | default('50m') }}",
-   "max-file": "{{ log.max_file | default('10') }}"
+   "max-file": "{{ log.max_file | default('10') }}",
+   "compress": "{{ log.compress | default('false') }}"
  },
 {% if live_restore and not swarm_init %} "live-restore": true,
 {% endif %}
