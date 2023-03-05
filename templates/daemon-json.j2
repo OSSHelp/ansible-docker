@@ -24,10 +24,11 @@
    "loki-retries": "{{ loki.retries | default('10') }}",
    "mode": "{{ log.mode | default('non-blocking') }}",
    "max-buffer-size": "{{ log.max_buffer_size | default('5m') }}",
+{% else %}
+   "compress": "{{ log.compress | default('false') }}",
 {% endif %}
    "max-size": "{{ log.max_size | default('50m') }}",
-   "max-file": "{{ log.max_file | default('10') }}",
-   "compress": "{{ log.compress | default('false') }}"
+   "max-file": "{{ log.max_file | default('10') }}"
  },
 {% if live_restore and not swarm_init %} "live-restore": true,
 {% endif %}
