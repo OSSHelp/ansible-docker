@@ -1,6 +1,6 @@
 # Docker
 
-[![Build Status](https://drone.osshelp.ru/api/badges/ansible/docker/status.svg?ref=refs/heads/master)](https://drone.osshelp.ru/ansible/docker)
+[![Build Status](https://drone.osshelp.io/api/badges/ansible/docker/status.svg?ref=refs/heads/master)](https://drone.osshelp.io/ansible/docker)
 
 ## Description
 

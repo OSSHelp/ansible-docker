@@ -30,7 +30,8 @@
     state: present
     update_cache: true
     cache_valid_time: 86400
-  when: ansible_distribution_release != 'focal'
+  when: ansible_distribution_release != 'focal' and
+        ansible_distribution_release != 'jammy'
 
 - name: install docker
   apt:
@@ -38,7 +39,8 @@
     state: present
     update_cache: true
     cache_valid_time: 86400
-  when: ansible_distribution_release == 'focal'
+  when: ansible_distribution_release == 'focal' or
+        ansible_distribution_release == 'jammy'
   no_log: true
   register: docker_packages_installation
   ignore_errors: true
@@ -46,12 +48,13 @@
 # due to stale issue with docker.socket
 # on intitial configuration attempt (focal)
 # see: https://github.com/docker/for-linux/issues/989
-- name: fix installation on focal
+- name: fix installation on focal/jammy
   apt:
     name: "{{ docker_packages[repo_branch] }}"
     state: present
     update_cache: false
-  when: "ansible_distribution_release == 'focal' and
+  when: "(ansible_distribution_release == 'focal' or
+         ansible_distribution_release == 'jammy') and
          docker_packages_installation.rc is defined and
          docker_packages_installation.rc != 0"
 
